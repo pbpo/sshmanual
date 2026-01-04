@@ -3,534 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>차량 내부 네트워크를 위한 최신 딥러닝 기반 침입 탐지 방법 분석</title>
+    <title>연구실 서버 접속 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body {
-            font-family: 'Nanum Gothic', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f2f5;
-            margin: 0;
-        }
-        .impress-not-supported .step {
-            position: relative;
-            display: block;
-            margin: 20px auto;
-        }
-        #impress {
-            position: relative;
-        }
-        .step {
-            width: 900px; /* 기본 슬라이드 너비 */
-            min-height: 600px; /* 내용 슬라이드 최소 높이 */
-            padding: 30px;
-            box-sizing: border-box;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-        }
-        .step.active {
-            background-color: rgb(255, 255, 255);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
-
-        .step h1 {
-            font-size: 2.2em;
-            color: #2c3e50;
-            margin-top: 0;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 8px;
-        }
-        .step h2 {
-            font-size: 1.6em;
-            color: #3498db;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-        .step p, .step ul {
-            font-size: 1.0em;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-        .step ul {
-            list-style-type: disc;
-            padding-left: 25px;
-        }
-        .step li {
-            margin-bottom: 6px;
-        }
-        .step strong {
-            color: #e74c3c;
-        }
-        .step .caption {
-            font-size: 0.85em;
-            color: #7f8c8d;
-            text-align: center;
-            margin-top: 5px;
-        }
-        .highlight {
-            color: #3498db;
-            font-weight: bold;
-        }
-        .note {
-            font-style: italic;
-            color: #555;
-            font-size: 0.9em;
-            margin-top: auto;
-            padding-top: 10px;
-        }
-
-        /* 표지 슬라이드 전용 스타일 */
-        #slide1 {
-            justify-content: center; /* 내용 수직 중앙 정렬 */
-            text-align: center; /* 텍스트 중앙 정렬 */
-        }
-        #slide1 h1.title-main {
-            font-size: 2.8em; /* 논문 제목 크기 조정 */
-            color: #2c3e50;
-            border-bottom: none; /* 제목 밑줄 제거 */
-            margin-bottom: 25px; /* 여백 조정 */
-            line-height: 1.3;
-        }
-        #slide1 p.title-sub {
-            font-size: 1.4em; /* 저자, 목적 크기 조정 */
-            color: #555;
-            margin-bottom: 18px; /* 여백 조정 */
-        }
-        #slide1 p.authors {
-            font-style: italic;
-            font-size: 1.3em; /* 저자 크기 조정 */
-        }
-
-
-        /* Figure 전용 슬라이드 스타일 */
-        .figure-slide {
-            width: 950px; /* 이미지 크기에 맞춰 너비 조정 가능 */
-            min-height: 700px; /* 이미지 크기에 맞춰 높이 조정 가능 */
-            padding: 10px; /* 이미지 위주이므로 패딩 최소화 */
-            justify-content: center; /* 내부 요소 중앙 정렬 */
-            align-items: center; /* 내부 요소 중앙 정렬 */
-            background-color: #fff; /* Figure 슬라이드 배경은 흰색으로 */
-        }
-        .figure-slide img {
-            max-width: 100%;
-            max-height: 620px; /* 슬라이드 높이와 캡션 공간 고려한 이미지 최대 높이 */
-            object-fit: contain; /* 이미지 비율 유지 */
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .figure-slide .caption {
-            margin-top: 10px;
-            font-weight: bold;
-            font-size: 0.9em;
-            color: #555;
-        }
-
-        /* 조사한 논문 요약 슬라이드 스타일 */
-        .paper-summary-slide h1 {
-            font-size: 1.8em; /* 요약 슬라이드 제목 크기 조정 */
-            margin-bottom: 20px;
-        }
-        .paper-summary-slide h2 {
-            font-size: 1.3em;
-            margin-top: 15px;
-            margin-bottom: 8px;
-            color: #3498db; /* 부제목 색상 강조 */
-        }
-        .paper-summary-slide ul {
-            font-size: 0.95em;
-        }
-         .paper-summary-slide li {
-            margin-bottom: 5px;
-        }
-
-
-        #overview {
-            background-color: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-        .impress-on-overview .step {
-            opacity: 0.5;
-            cursor: pointer;
-        }
-        .impress-on-overview .step.active {
-             opacity: 1;
-        }
-
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body { font-family: 'Pretendard', sans-serif; }
+        .step-card { transition: all 0.3s ease; }
+        .step-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .code-block { font-family: 'Menlo', 'Monaco', 'Courier New', monospace; }
     </style>
 </head>
-<body class="impress-not-supported">
+<body class="bg-slate-50 text-slate-800">
 
-<div id="impress" data-transition-duration="1000">
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i data-lucide="server" class="w-6 h-6"></i>
+                <h1 class="text-xl font-bold">연구실 서버 접속 가이드</h1>
+            </div>
+            <span class="text-xs bg-indigo-500 px-2 py-1 rounded text-indigo-100">초보자용 v1.0</span>
+        </div>
+    </header>
 
-    <div id="slide1" class="step" data-x="-1000" data-y="-3500">
-        <h1 class="title-main">Analysis of Recent Deep-Learning-Based<br>Intrusion Detection Methods for In-Vehicle Network</h1>
-        <p class="title-sub authors">Kai Wang, Aiheng Zhang, Haoran Sun, Bailing Wang</p>
-        <p class="title-sub"><strong>발표 목적:</strong> 차량 내부 네트워크 보안을 위한 최신 딥러닝 기반 침입 탐지 방법들의 정량적 비교 분석 결과 제시</p>
-    </div>
+    <main class="max-w-4xl mx-auto px-6 py-8 space-y-12">
 
-    <div id="slide2" class="step paper-summary-slide" data-x="-2000" data-y="-2500">
-        <h1>조사한 논문 1: Hybrid IDS with K-Means+RF & Deep Learning (Liu et al., 2021)</h1>
-        <h2>문제점</h2>
-        <ul>
-            <li>기존 IDS는 대용량 데이터셋에 대한 효율성 및 정확도에 어려움 [cite: 3]</li>
-            <li>신속한 경고 및 정확한 공격 유형 분류 필요성 [cite: 3]</li>
-        </ul>
-        <h2>제안 해결책: 3단계 하이브리드 모델 [cite: 4, 5, 6]</h2>
-        <ul>
-            <li><strong>1단계:</strong> 데이터 전처리 (정규화, 원-핫 인코딩) [cite: 56]</li>
-            <li><strong>2단계:</strong> Spark 플랫폼에서 K-Means와 Random Forest를 사용한 빠른 이진 분류 (정상/공격) [cite: 5, 57]</li>
-            <li><strong>3단계:</strong> 비정상 이벤트에 대해 Deep Learning(CNN, LSTM)을 사용한 다중 클래스 공격 분류 (ADASYN으로 데이터 불균형 해결) [cite: 6, 7, 58]</li>
-        </ul>
-        <h2>사용 데이터셋</h2>
-        <ul>
-            <li>NSL-KDD, CIC-IDS2017 [cite: 8]</li>
-        </ul>
-    </div>
+        <!-- Info Banner -->
+        <section class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 text-center">
+            <h2 class="text-2xl font-bold mb-6 text-slate-800">서버 접속 정보</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-slate-100 p-4 rounded-xl flex flex-col items-center justify-center relative group">
+                    <span class="text-sm text-slate-500 mb-1">IP 주소 (서버 위치)</span>
+                    <strong class="text-2xl text-indigo-600 font-mono tracking-wider">10.150.20.140</strong>
+                    <button onclick="copyText('10.150.20.140')" class="absolute right-2 top-2 p-2 text-slate-400 hover:text-indigo-600 transition-colors" title="복사하기">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="bg-slate-100 p-4 rounded-xl flex flex-col items-center justify-center relative">
+                    <span class="text-sm text-slate-500 mb-1">Port (문 번호)</span>
+                    <strong class="text-2xl text-indigo-600 font-mono tracking-wider">48000</strong>
+                    <button onclick="copyText('48000')" class="absolute right-2 top-2 p-2 text-slate-400 hover:text-indigo-600 transition-colors" title="복사하기">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
 
-    <div id="slide2a" class="step paper-summary-slide" data-x="-1000" data-y="-2500">
-        <h1>조사한 논문 1: 방법론 및 주요 결과 (Liu et al.)</h1>
-        <h2>방법론 특징</h2>
-        <ul>
-            <li>분산 K-Means로 데이터 클러스터링 후 RF로 클러스터 분류 [cite: 63, 72]</li>
-            <li>작은 클러스터(&lt;20개)는 직접 공격으로 판단 [cite: 143]</li>
-            <li>딥러닝 모델은 2단계의 공격 샘플에 대해서만 학습하여 효율성 증대 [cite: 51, 62]</li>
-            <li>ADASYN을 사용하여 공격 유형 간 클래스 불균형 문제 해결 [cite: 7, 156]</li>
-        </ul>
-        <h2>주요 결과 및 기여</h2>
-        <ul>
-            <li>높은 이진 분류 정확도: 92.90% (NSL-KDD), 99.87% (CIC-IDS2017) [cite: 203, 207]</li>
-            <li>높은 다중 클래스 공격 분류 정확도: 85.24% (NSL-KDD), 99.91% (CIC-IDS2017) [cite: 10, 245, 251]</li>
-            <li>딥러닝 단계 학습 시간 크게 단축 (약 50 에포크) [cite: 216]</li>
-            <li>대부분 공격 유형에 대한 TPR 향상 (예: NSL-KDD에서 R2L 73.84%까지) [cite: 9, 223]</li>
-            <li>고차원 대용량 데이터에 효과적인 모델 제시 [cite: 50]</li>
-        </ul>
-    </div>
+        <!-- Steps Container -->
+        <div class="space-y-8">
+            
+            <!-- Step 1 -->
+            <section class="step-card bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+                <div class="flex items-start gap-4">
+                    <div class="bg-indigo-100 text-indigo-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">1</div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold mb-2">접속용 열쇠(SSH Key) 만들기</h3>
+                        <p class="text-slate-600 mb-4">이 서버는 비밀번호 대신 '파일 열쇠'를 사용합니다. 내 컴퓨터에서 열쇠를 만들어야 합니다.</p>
+                        
+                        <!-- OS Selector -->
+                        <div class="flex gap-2 mb-4 bg-slate-100 p-1 rounded-lg w-fit">
+                            <button onclick="setOS('windows')" id="btn-windows" class="px-4 py-2 rounded-md text-sm font-medium bg-white shadow text-indigo-600 transition-all">Windows</button>
+                            <button onclick="setOS('mac')" id="btn-mac" class="px-4 py-2 rounded-md text-sm font-medium text-slate-500 hover:bg-white/50 transition-all">Mac / Linux</button>
+                        </div>
 
-    <div id="slide2b" class="step paper-summary-slide" data-x="0" data-y="-2500">
-        <h1>조사한 논문 2: CNN-based IDS for CAN Bus (Hossain et al., 2020)</h1>
-        <h2>문제점</h2>
-        <ul>
-            <li>CAN 버스는 보안 메커니즘(암호화, 인증 부재) 부족으로 취약 [cite: 351, 366]</li>
-            <li>실제 차량 데이터로 검증된, 낮은 오탐율의 효율적인 IDS 필요 [cite: 377, 379]</li>
-        </ul>
-        <h2>제안 해결책: CNN 기반 IDS [cite: 353, 381]</h2>
-        <ul>
-            <li>DoS, Fuzzing, Spoofing 공격 탐지에 중점 [cite: 384]</li>
-        </ul>
-        <h2>데이터셋</h2>
-        <ul>
-            <li>3종 실제 차량(Toyota, Subaru, Suzuki)에서 생성한 "NAIST CAN Attack Datasets" 사용 [cite: 354, 382]</li>
-            <li>정상 트래픽 및 DoS, Fuzzing, RPM, Gear Spoofing 공격 포함 [cite: 382]</li>
-        </ul>
-        <h2>데이터 전처리</h2>
-        <ul>
-            <li>CAN 메시지(ID, DLC, 데이터 필드 D0-D7)를 16진수에서 10진수로 변환 [cite: 451]</li>
-            <li>10개 특징을 1D CNN에 직접 입력으로 사용 [cite: 452]</li>
-        </ul>
-    </div>
+                        <div id="content-windows" class="bg-slate-900 rounded-xl p-4 text-slate-100 code-block text-sm overflow-x-auto">
+                            <p class="text-slate-400 mb-2"># Windows 검색창(Win키)에서 "PowerShell"을 검색해 실행 후 아래 명령어를 입력하세요.</p>
+                            <div class="flex justify-between items-center bg-slate-800 p-3 rounded mb-2">
+                                <code class="text-green-400">ssh-keygen -t ed25519</code>
+                                <button onclick="copyText('ssh-keygen -t ed25519')" class="text-slate-400 hover:text-white"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                            </div>
+                            <p class="text-slate-400 text-xs mt-2">
+                                ※ 실행 후 질문이 나오면 아무것도 입력하지 말고 <span class="text-yellow-400 font-bold">Enter 키를 3번</span> 누르세요.
+                            </p>
+                        </div>
 
-    <div id="slide2c" class="step paper-summary-slide" data-x="1000" data-y="-2500">
-        <h1>조사한 논문 2: CNN 모델 및 주요 결과 (Hossain et al.)</h1>
-        <h2>CNN 모델 세부사항</h2>
-        <ul>
-            <li>CAN 메시지와 같은 시계열 데이터에 적합한 1D CNN 아키텍처 [cite: 396, 472]</li>
-            <li>파라미터: 200 에포크, 드롭아웃 0.1, 'softmax' 출력, 'Nadam' 옵티마이저, 배치 256, 학습률 0.0001 [cite: 476, 488]</li>
-            <li>다중 클래스 분류(정상, DoS, Fuzzing, RPM, Gear)로 학습 [cite: 457]</li>
-        </ul>
-        <h2>주요 결과 및 기여</h2>
-        <ul>
-            <li>여러 차종으로부터 실제 CAN 공격 데이터셋 개발 [cite: 383]</li>
-            <li>높은 탐지 정확도 달성 (Toyota: 99.9856%, Subaru: 99.9910%, Suzuki: 99.9897%) [cite: 355, 477]</li>
-            <li>모든 차종의 공격 유형에 대해 우수한 재현율(탐지율, 약 0.999) 및 F1-점수 [cite: 477]</li>
-            <li>매우 낮은 FPR (False Positive Rate) 및 FNR (False Negative Rate) [cite: 477]</li>
-            <li>별도의 특징 공학 없이 차량용 IDS에 CNN의 효과 입증 [cite: 396, 520]</li>
-        </ul>
-    </div>
+                        <div id="content-mac" class="hidden bg-slate-900 rounded-xl p-4 text-slate-100 code-block text-sm overflow-x-auto">
+                            <p class="text-slate-400 mb-2"># 터미널(Terminal) 앱을 열고 아래 명령어를 입력하세요.</p>
+                            <div class="flex justify-between items-center bg-slate-800 p-3 rounded mb-2">
+                                <code class="text-green-400">ssh-keygen -t ed25519</code>
+                                <button onclick="copyText('ssh-keygen -t ed25519')" class="text-slate-400 hover:text-white"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                            </div>
+                            <p class="text-slate-400 text-xs mt-2">
+                                ※ 실행 후 질문이 나오면 아무것도 입력하지 말고 <span class="text-yellow-400 font-bold">Enter 키를 3번</span> 누르세요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-    <div id="slide2d" class="step paper-summary-slide" data-x="2000" data-y="-2500">
-        <h1>조사한 논문 3: Cloud-Based Deep Learning IDS (Loukas et al., 2018)</h1>
-        <h2>문제점</h2>
-        <ul>
-            <li>차량 내 탑재된 시스템은 고급 IDS를 위한 처리 자원이 제한적임 [cite: 557]</li>
-            <li>기존 경량 IDS는 복잡하거나 새로운 유형의 공격 탐지에 한계 [cite: 557]</li>
-        </ul>
-        <h2>제안 해결책: 딥러닝 기반 IDS를 클라우드로 오프로딩 [cite: 558, 560]</h2>
-        <ul>
-            <li>더 강력한 처리 능력을 활용하여 정교한 탐지 가능 (사례 연구: 소형 로봇 지상 차량) [cite: 559, 560]</li>
-        </ul>
-        <h2>방법론</h2>
-        <ul>
-            <li>입력: 사이버(네트워크, CPU) 및 물리적(속도, 진동, 전력) 센서의 시계열 데이터 [cite: 562, 740]</li>
-            <li>모델: LSTM 은닉층을 가진 순환 신경망(RNN), 심층 다층 퍼셉트론(MLP) [cite: 563]</li>
-            <li>연구된 공격 유형: DoS, 명령 삽입, 악성코드(네트워크 및 CPU 유형) [cite: 564, 759]</li>
-        </ul>
-    </div>
+            <!-- Step 2 -->
+            <section class="step-card bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                <div class="flex items-start gap-4">
+                    <div class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">2</div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold mb-2">열쇠(Public Key) 확인하고 관리자에게 보내기</h3>
+                        <p class="text-slate-600 mb-4">방금 만든 열쇠 내용(외계어 같은 문자열)을 복사해서 관리자(선배/조교)에게 카톡이나 메일로 보내야 계정이 생성됩니다.</p>
+                        
+                        <div class="bg-slate-100 p-4 rounded-xl border border-slate-200">
+                            <p class="text-sm font-bold text-slate-700 mb-2">아래 명령어를 입력하면 열쇠 내용이 화면에 나옵니다. 드래그해서 복사하세요.</p>
+                            <div class="bg-white p-3 rounded border border-slate-300 flex justify-between items-center code-block text-sm">
+                                <code class="text-pink-600 break-all select-all">cat ~/.ssh/id_ed25519.pub</code>
+                                <button onclick="copyText('cat ~/.ssh/id_ed25519.pub')" class="ml-2 text-slate-400 hover:text-blue-600 flex-shrink-0"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                            </div>
+                            <div class="mt-4 p-3 bg-blue-50 text-blue-800 text-xs rounded-lg">
+                                <strong>💡 예시:</strong> ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... (이런 긴 줄 전체를 복사해서 보내세요)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-     <div id="slide2e" class="step paper-summary-slide" data-x="-2000" data-y="-1500">
-        <h1>조사한 논문 3: 오프로딩 및 주요 결과 (Loukas et al.)</h1>
-        <h2>컴퓨팅 오프로딩</h2>
-        <ul>
-            <li>차량에서 외부의 강력한 시스템(예: 클라우드)으로 데이터 처리 이전 [cite: 657]</li>
-            <li>차량 내 부하 감소, 딥러닝과 같은 복잡한 알고리즘 사용 가능 [cite: 589]</li>
-            <li>실용성은 네트워크 신뢰성 및 처리 요구사항에 따라 달라지며, 이를 평가하기 위한 수학적 모델 개발 [cite: 566]</li>
-        </ul>
-        <h2>주요 결과 및 기여</h2>
-        <ul>
-            <li>RNN(LSTM 사용)이 기존 공격에 대해 표준 ML(Random Forest, SVM) 및 MLP보다 일관되게 높은 정확도 달성 (평균 86.9% vs ~80%) [cite: 561, 784]</li>
-            <li>RNN LSTM은 알려지지 않은 공격(CPU 악성코드)에 대해 더 나은 성능 시현 (정확도 66.9%) [cite: 786, 818, 819]</li>
-            <li>사이버-물리적 차량 보안을 위한 클라우드 오프로딩 딥러닝 IDS의 실현 가능성 입증 [cite: 674]</li>
-            <li>네트워크가 신뢰할 수 있고 처리가 집중적일 때 오프로딩이 탐지 지연 시간 감소 [cite: 567]</li>
-        </ul>
-    </div>
+            <!-- Step 3 -->
+            <section class="step-card bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
+                <div class="flex items-start gap-4">
+                    <div class="bg-green-100 text-green-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">3</div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold mb-2">서버 접속하기</h3>
+                        <p class="text-slate-600 mb-4">관리자가 "계정 생성 완료되었습니다"라고 하면, 아래 명령어로 접속합니다.</p>
+                        
+                        <div class="bg-slate-900 text-white p-6 rounded-xl shadow-inner">
+                            <label class="text-xs text-slate-400 uppercase font-bold mb-1 block">접속 명령어 생성기</label>
+                            <div class="flex flex-col md:flex-row gap-3 mb-4">
+                                <input type="text" id="usernameInput" placeholder="부여받은 ID 입력 (예: gildong)" class="bg-slate-800 border border-slate-600 text-white text-sm rounded-lg p-2.5 flex-1 focus:ring-green-500 focus:border-green-500 outline-none transition-colors">
+                            </div>
+                            
+                            <div class="bg-black p-4 rounded border border-slate-700 flex justify-between items-center">
+                                <code id="sshCommand" class="text-green-400 font-mono text-sm break-all">ssh -p 48000 <span class="text-yellow-400">[ID]</span>@10.150.20.140</code>
+                                <button onclick="copyCommand()" class="ml-4 text-slate-400 hover:text-white"><i data-lucide="copy" class="w-5 h-5"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-     <div id="slide2f" class="step paper-summary-slide" data-x="-1000" data-y="-1500">
-        <h1>조사한 논문 4: DCNN for In-Vehicle IDS (Song, Woo, Kim, 2020)</h1>
-        <h2>문제점</h2>
-        <ul>
-            <li>CAN 버스의 내재적 보안 기능 부재 (메시지 암호화, 발신자 인증 없음) [cite: 1054]</li>
-            <li>수동적 특징 공학 없이 원시 데이터로부터 학습 가능하고 낮은 FN을 갖는 견고한 IDS 필요성 [cite: 1056]</li>
-        </ul>
-        <h2>제안 해결책: 심층 컨볼루션 신경망(DCNN) 기반 IDS [cite: 1055]</h2>
-        <ul>
-            <li>CAN 트래픽에 최적화된 DCNN 아키텍처 (축소된 Inception-ResNet) [cite: 1057]</li>
-        </ul>
-        <h2>핵심 혁신 사항: 프레임 빌더 (Frame Builder) [cite: 1080, 1081]</h2>
-        <ul>
-            <li>CAN ID 시퀀스(29개 ID x ID당 29비트)를 CNN 입력용 2D 그리드 데이터($29 \times 29 \times 1$)로 변환 [cite: 1301]</li>
-            <li>CNN이 시간적 패턴을 공간적 상관관계로 학습하도록 함 [cite: 1082]</li>
-        </ul>
-        <h2>데이터셋</h2>
-        <ul>
-            <li>실제 차량에서 수집한 DoS, Fuzzy, Gear Spoofing, RPM Spoofing 공격을 포함하는 자체 제작, 공개 데이터셋 [cite: 1058, 1087, 1088, 1372]</li>
-        </ul>
-    </div>
+            <!-- Step 4 -->
+            <section class="step-card bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-purple-500"></div>
+                <div class="flex items-start gap-4">
+                    <div class="bg-purple-100 text-purple-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">4</div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold mb-2">필수 환경 사용법 (중요!)</h3>
+                        <p class="text-slate-600 mb-4">이 서버는 <strong>GPU 모드</strong>(기본)와 <strong>ROOT 모드</strong>(설치용)가 분리되어 있습니다.</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <!-- GPU Mode -->
+                            <div class="border border-green-200 bg-green-50 p-4 rounded-xl">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-green-600 text-white text-xs px-2 py-1 rounded font-bold">기본</span>
+                                    <h4 class="font-bold text-green-800">GPU 모드</h4>
+                                </div>
+                                <p class="text-sm text-green-700 mb-3">평소에 연구하고 코드 돌릴 때 사용합니다.</p>
+                                <ul class="text-xs text-green-800 space-y-1 list-disc pl-4">
+                                    <li>프롬프트가 <span class="font-mono text-green-600">[GPU] user@host...</span> 로 보임</li>
+                                    <li><code>python train.py</code> 실행 가능</li>
+                                    <li><code>pip install</code> 가능</li>
+                                </ul>
+                            </div>
 
-    <div id="slide2g" class="step paper-summary-slide" data-x="0" data-y="-1500">
-        <h1>조사한 논문 4: 축소된 Inception-ResNet 및 결과 (Song et al.)</h1>
-        <h2>축소된 Inception-ResNet 모델 [cite: 1310]</h2>
-        <ul>
-            <li>이미지 분류를 위한 원본 Inception-ResNet을 수정 및 구조 단순화 (더 작은 입력 및 이진 분류에 맞춤) [cite: 1311, 1315]</li>
-            <li>계산 부하 및 과적합 위험 감소 (메모리 사용량: 원본의 약 2%) [cite: 1317, 1327, 1329]</li>
-        </ul>
-        <h2>주요 결과 및 기여</h2>
-        <ul>
-            <li>CAN 버스 IDS를 위한 DCNN (Inception-ResNet 기반) 적용 선도 [cite: 1084]</li>
-            <li>매우 낮은 FNR (False Negative Rate) 및 ER (Error Rate) 달성 [cite: 1059, 1400, 1452]
-                 <ul><li>예: DoS: FNR 0.10%; Fuzzy: FNR 0.35% (표6 평균 FNR 기준)</li></ul>
-            </li>
-            <li>기존 머신러닝 알고리즘 대비 우수한 성능 [cite: 1083, 1428]</li>
-            <li>실제 차량 CAN 공격 데이터셋 공개 기여 [cite: 1088]</li>
-        </ul>
-    </div>
+                            <!-- Root Mode -->
+                            <div class="border border-red-200 bg-red-50 p-4 rounded-xl">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-red-600 text-white text-xs px-2 py-1 rounded font-bold">관리자</span>
+                                    <h4 class="font-bold text-red-800">ROOT 모드</h4>
+                                </div>
+                                <p class="text-sm text-red-700 mb-3">패키지를 설치(apt-get)할 때만 잠깐 사용합니다.</p>
+                                <ul class="text-xs text-red-800 space-y-1 list-disc pl-4">
+                                    <li>프롬프트가 <span class="font-mono text-red-600">[ROOT] user@host...</span> 로 보임</li>
+                                    <li><code>apt update</code>, <code>apt install</code> 가능</li>
+                                </ul>
+                            </div>
+                        </div>
 
-    <div id="slide2h" class="step paper-summary-slide" data-x="1000" data-y="-1500">
-        <h1>조사한 논문 5: Review of IDS for Automotive CAN Bus (Lokman et al., 2019)</h1>
-        <h2>리뷰 목적 [cite: 1551]</h2>
-        <ul>
-            <li>CAN 버스 보안을 위한 IDS 구현에 대한 포괄적인 개요 제공 [cite: 1552]</li>
-            <li>CAN 취약점, 공격 유형 및 기존 보안 솔루션 논의 [cite: 1549, 1550]</li>
-        </ul>
-        <h2>범위 - IDS 분류 기준 [cite: 1553, 1674]</h2>
-        <ul>
-            <li><strong>탐지 접근 방식:</strong> 이상 기반, 서명 기반, 명세 기반, 하이브리드 [cite: 1674, 1738]</li>
-            <li><strong>배포 전략:</strong> ECU, CAN 네트워크, 중앙 게이트웨이 [cite: 1676]</li>
-            <li><strong>공격 기법 및 기술적 과제</strong> [cite: 1674]</li>
-        </ul>
-        <h2>CAN 취약점 [cite: 1604, 1608]</h2>
-        <ul>
-            <li>패킷 내 송수신자 인증 부재, 브로드캐스트 특성</li>
-        </ul>
-    </div>
+                        <div class="mt-4 bg-slate-800 text-slate-200 p-4 rounded-xl text-sm">
+                            <p class="font-bold text-white mb-2">🔄 모드 전환 명령어 (외워두세요!)</p>
+                            <div class="grid gap-2">
+                                <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                                    <span>설치하러 갈 때 (GPU → ROOT)</span>
+                                    <code class="text-yellow-400 font-mono bg-slate-700 px-2 py-1 rounded">lab_root_shell</code>
+                                </div>
+                                <div class="flex justify-between items-center pt-1">
+                                    <span>다시 연구하러 갈 때 (ROOT → GPU)</span>
+                                    <code class="text-green-400 font-mono bg-slate-700 px-2 py-1 rounded">lab_gpu_shell</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-    <div id="slide2i" class="step paper-summary-slide" data-x="2000" data-y="-1500">
-        <h1>조사한 논문 5: 주요 IDS 접근법 및 과제 (Lokman et al. 리뷰)</h1>
-        <h2>이상 기반 IDS 분석 (가장 유망) [cite: 1739]</h2>
-        <ul>
-            <li>빈도 기반[cite: 1752], 머신러닝 기반 (DNN, SVM, LSTM)[cite: 1745], 통계 기반[cite: 1745], 하이브리드 기반 [cite: 1746]</li>
-        </ul>
-        <h2>기타 IDS 접근법</h2>
-        <ul>
-            <li><strong>서명 기반:</strong> 알려진 공격 패턴 탐지. 업데이트된 서명 DB 필요. [cite: 1906, 1909, 1910]</li>
-            <li><strong>명세 기반:</strong> 허용된 행동 정의. 학습 불필요하나 수동 규칙 생성 복잡. [cite: 1892, 1894, 1896]</li>
-        </ul>
-        <h2>CAN IDS의 주요 과제 [cite: 1726]</h2>
-        <ul>
-            <li>ECU의 제한된 처리 능력 및 메모리, 엄격한 실시간 탐지 요구사항 [cite: 1727, 1728]</li>
-            <li>CAN 트래픽의 고유한 특성, 비용/크기/무게 제약 [cite: 1731, 1735]</li>
-        </ul>
-        <h2>리뷰 기여</h2>
-        <ul>
-            <li>향후 CAN IDS 연구 가속화를 위한 심층 조사 및 분류 제공 [cite: 1555, 1572]</li>
-        </ul>
-    </div>
-    <div id="slide3" class="step" data-x="-2000" data-y="-500">
-        <h1>서론 (본 논문)</h1>
-        <ul>
-            <li>차량-사물 통신(V2X) 발달로 차량 내부 네트워크(IVN) 보안 위협 증가 [cite: 2103]</li>
-            <li>다양한 딥러닝 기반 침입 탐지 방법(IDS) 등장 [cite: 2104]</li>
-            <li><strong>기존 연구의 한계점:</strong>
-                <ul>
-                    <li>최신 딥러닝 IDS 간 <span class="highlight">정량적/공정한 수평적 성능 비교</span> 부재 [cite: 2105]</li>
-                    <li><span class="highlight">미지 공격(Unknown Attack)</span> 탐지 능력 비교 분석 부재 [cite: 2106]</li>
-                    <li>모델의 <span class="highlight">시간 및 하드웨어 리소스 소비량</span> 비교 분석 부재 [cite: 2106]</li>
-                </ul>
-            </li>
-            <li>따라서 본 논문은 10가지 대표적인 최신 딥러닝 기반 IDS를 대상으로 위에서 언급된 한계점들을 비교 분석하고, 향후 연구 방향을 제시하고자 한다. [cite: 2107, 2109]</li>
-        </ul>
-    </div>
+        </div>
 
-    <div id="slide4" class="step" data-x="-1000" data-y="-500">
-        <h1>연구 대상: 10가지 대표 딥러닝 IDS (본 논문)</h1>
-        <p>본 논문에서 비교 분석한 10가지 최신 모델이다 (논문 표 1 [cite: 2175] 참조):</p>
-        <ul>
-            <li>Reduced Inception-ResNet[cite: 2150], CANTransfer[cite: 2151], CAN-ADF[cite: 2155], TSP[cite: 2156], O-DAE[cite: 2157, 2158], LDAN[cite: 2161], E-GAN[cite: 2159], HyDL-IDS[cite: 2168], CANet[cite: 2169], Rec-CNN [cite: 2171]</li>
-        </ul>
-        <p class="note">각 알고리즘은 다양한 구조와 학습 방식을 대표한다. 상세 비교는 이후 슬라이드에서 다룹니다.</p>
-    </div>
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none flex items-center gap-2 z-50">
+            <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+            <span class="text-sm font-medium">복사되었습니다!</span>
+        </div>
 
+    </main>
 
-    <div id="slide5" class="step" data-x="0" data-y="-500">
-        <h1>실험 방법론 (1): 정량적 비교 설정 (본 논문)</h1>
-        <ul>
-            <li><strong>물리적 구성:</strong> Intel Xeon E5-2640 v4 CPU, NVIDIA GPU, 128GB RAM, CentOS 7, TensorFlow 2.0, NumPy [cite: 2183, 2184]</li>
-            <li><strong>실험 데이터셋:</strong> "car-hacking dataset" (dataset-2) 사용 (논문 표 II [cite: 2196] 참조) [cite: 2187, 2190]</li>
-            <li><strong>공격 시나리오</strong> (논문 표 III [cite: 2197] 참조):
-                <ul>
-                    <li><span class="highlight">DoS 공격:</span> <strong>알려진 공격(Known Attack)</strong> [cite: 2200]</li>
-                    <li><span class="highlight">Fuzzy 공격 및 Impersonation 공격:</span> <strong>미지 공격(Unknown Attack)</strong> [cite: 2201]</li>
-                </ul>
-            </li>
-            <li><span class="highlight">(다음 슬라이드에서 Figure 1: 공격 시나리오 이미지 확인)</span></li>
-        </ul>
-    </div>
+    <footer class="bg-slate-100 py-8 text-center text-slate-500 text-sm">
+        <p>Lab Server Access Guide for Beginners</p>
+    </footer>
 
-    <div id="slide5a" class="step figure-slide" data-x="1000" data-y="-500">
-        <img src="1.png" alt="Figure 1: Attack Scenarios">
-        <p class="caption">Figure 1: Three types of network-based attacks (논문 Figure 1 [cite: 2211])</p>
-    </div>
+    <script>
+        // Icons
+        lucide.createIcons();
 
-    <div id="slide6" class="step" data-x="2000" data-y="-500">
-        <h1>실험 방법론 (2): 모델 학습 및 예측 (본 논문)</h1>
-        <ul>
-            <li><strong>학습 파라미터:</strong> 3-겹 교차 검증으로 최적 하이퍼파라미터 탐색. <span class="highlight">(다음 슬라이드에서 Figure 2: 손실 곡선 이미지 확인)</span> [cite: 2225]</li>
-            <li><strong>데이터셋 분할</strong> (논문 표 IV [cite: 2213] 참조): 정상 및 DoS 70% 학습, 나머지 중 5% 테스트. CANTransfer 1-shot 학습 평가 [cite: 2230, 2231]</li>
-            <li><strong>데이터 전처리:</strong> 각 모델 원본 연구 방법 적용 (논문 표 V [cite: 2237] 참조) [cite: 2233]</li>
-        </ul>
-    </div>
+        // OS Switcher
+        function setOS(os) {
+            const winBtn = document.getElementById('btn-windows');
+            const macBtn = document.getElementById('btn-mac');
+            const winContent = document.getElementById('content-windows');
+            const macContent = document.getElementById('content-mac');
 
-    <div id="slide6a" class="step figure-slide" data-x="3000" data-y="-500">
-        <img src="2.png" alt="Figure 2: Average loss values">
-        <p class="caption">Figure 2: The average loss value of training and validation process (논문 Figure 2 [cite: 2238])</p>
-    </div>
+            if (os === 'windows') {
+                winBtn.className = "px-4 py-2 rounded-md text-sm font-medium bg-white shadow text-indigo-600 transition-all";
+                macBtn.className = "px-4 py-2 rounded-md text-sm font-medium text-slate-500 hover:bg-white/50 transition-all";
+                winContent.classList.remove('hidden');
+                macContent.classList.add('hidden');
+            } else {
+                winBtn.className = "px-4 py-2 rounded-md text-sm font-medium text-slate-500 hover:bg-white/50 transition-all";
+                macBtn.className = "px-4 py-2 rounded-md text-sm font-medium bg-white shadow text-indigo-600 transition-all";
+                winContent.classList.add('hidden');
+                macContent.classList.remove('hidden');
+            }
+        }
 
-    <div id="slide7" class="step" data-x="-2000" data-y="500">
-        <h1>평가 지표 (본 논문)</h1>
-        <ul>
-            <li><strong>실행 성능 평가 지표:</strong> 시간 소비 (학습/예측), 메모리 사용량 [cite: 2243, 2244, 2248]</li>
-            <li><strong>탐지 성능 평가 지표:</strong> 정확도, 정밀도, 재현율, FPR, F1-점수, ROC AUC [cite: 2250, 2253, 2264, 2271]</li>
-            <li><span class="highlight">(다음 슬라이드에서 Figure 3, 4: 실행 성능 결과 이미지 확인)</span></li>
-        </ul>
-    </div>
+        // Copy Function
+        function copyText(text) {
+            // Create a temporary textarea to handle copy
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            
+            showToast();
+        }
 
-    <div id="slide7a" class="step figure-slide" data-x="-1000" data-y="500">
-        <img src="3.png" alt="Figure 3: Time consumption">
-        <p class="caption">Figure 3: The time consumption of ten representative models (논문 Figure 3)</p>
-    </div>
+        // SSH Command Generator
+        const usernameInput = document.getElementById('usernameInput');
+        const sshCommandDisplay = document.getElementById('sshCommand');
 
-    <div id="slide7b" class="step figure-slide" data-x="0" data-y="500">
-        <img src="4.png" alt="Figure 4: Memory consumption">
-        <p class="caption">Figure 4: The memory consumption of ten representative models (논문 Figure 4)</p>
-    </div>
+        usernameInput.addEventListener('input', (e) => {
+            const username = e.target.value.trim() || '[ID]';
+            const displayUsername = username === '[ID]' ? '<span class="text-yellow-400">[ID]</span>' : username;
+            sshCommandDisplay.innerHTML = `ssh -p 48000 ${displayUsername}@10.150.20.140`;
+        });
 
+        function copyCommand() {
+            const username = usernameInput.value.trim();
+            if(!username) {
+                alert('ID를 먼저 입력해주세요!');
+                usernameInput.focus();
+                return;
+            }
+            copyText(`ssh -p 48000 ${username}@10.150.20.140`);
+        }
 
-    <div id="slide8" class="step" data-x="1000" data-y="500">
-        <h1>결과 (1): 실행 성능 평가 요약 (본 논문)</h1>
-        <p>앞서 보신 Figure 3, 4 [cite: 2272]를 바탕으로 요약하면 다음과 같습니다:</p>
-        <ul>
-            <li><strong>시간 소비:</strong> Rec-CNN이 학습 및 추론 모두 가장 적은 시간 소요[cite: 2274]. Reduced Inception-ResNet은 가장 긴 시간 소요[cite: 2276].</li>
-            <li><strong>메모리 소비 (추론 시):</strong> LDAN이 가장 낮은 메모리 사용량 (43.7MB)[cite: 2285].</li>
-            <li>종합적으로 HyDL-IDS, CANet, Rec-CNN, LDAN이 우수한 실행 성능을 보이었다[cite: 2284, 2285].</li>
-        </ul>
-    </div>
-
-    <div id="slide9" class="step" data-x="-2000" data-y="1500">
-        <h1>결과 (2): 탐지 성능 (미지 공격) (본 논문)</h1>
-        <p>미지 공격(Fuzzy, Gear Spoofing, RPM Spoofing) 탐지 능력 평가 (논문 표 VI [cite: 2282] 참조):</p>
-        <ul>
-            <li><strong>대부분 모델:</strong> 정밀도와 재현율이 <strong>거의 0</strong> (탐지 실패)[cite: 2296]. (높은 Accuracy는 데이터 불균형 영향 [cite: 2297])</li>
-            <li><strong>제한적 탐지 능력:</strong> CANTransfer (1-shot 학습 시 Fuzzy 공격 F1 0.0599)[cite: 2299, 2300], CAN-ADF, HyDL-IDS 등 일부 모델만 미미한 수준[cite: 2301, 2302].</li>
-            <li><strong>Gear Spoofing 공격:</strong> 모든 모델 탐지 <strong>실패</strong>[cite: 2304].</li>
-        </ul>
-        <p class="note">미지 공격 탐지는 여전히 큰 도전 과제이다.</p>
-    </div>
-
-    <div id="slide10" class="step" data-x="-1000" data-y="1500">
-        <h1>결과 (3): 탐지 성능 (알려진 DoS 공격) (본 논문)</h1>
-        <p>알려진 DoS 공격 탐지 성능 비교 (논문 표 VI [cite: 2282] 참조):</p>
-        <ul>
-            <li><strong>전반적 결과:</strong> 모든 모델 높은 탐지 성능 (F1 >0.94, FPR <0.02)[cite: 2311].</li>
-            <li><strong>1등급 모델:</strong> Reduced Inception-ResNet, CANet, CANTransfer[cite: 2316].</li>
-            <li><span class="highlight">(다음 슬라이드들에서 Figure 5, 6, 7: DoS 공격 결과 상세 이미지 확인)</span></li>
-        </ul>
-    </div>
-
-    <div id="slide10a" class="step figure-slide" data-x="0" data-y="1500">
-        <img src="5.png" alt="Figure 5: Confusion matrices for DoS">
-        <p class="caption">Figure 5: The confusion matrices of ten models for DoS attack (논문 Figure 5 [cite: 2291])</p>
-    </div>
-
-    <div id="slide10b" class="step figure-slide" data-x="1000" data-y="1500">
-        <img src="6.png" alt="Figure 6: Detection performance for DoS">
-        <p class="caption">Figure 6: The detection performance of all methods against known DoS attack (논문 Figure 6)</p>
-    </div>
-
-    <div id="slide10c" class="step figure-slide" data-x="2000" data-y="1500">
-        <img src="7.png" alt="Figure 7: ROC curves for DoS">
-        <p class="caption">Figure 7: The ROC curves of ten models for DoS attack inference (논문 Figure 7 [cite: 2308])</p>
-    </div>
-
-
-    <div id="slide11" class="step" data-x="0" data-y="2500">
-        <h1>논의 및 종합 평가 (본 논문)</h1>
-        <p>앞서 보신 Figure 5, 6, 7 및 전체 결과를 종합하면[cite: 2323]:</p>
-        <ul>
-            <li><strong>최적 비교 베이스라인 제안:</strong>
-                <ul>
-                    <li><span class="highlight">CANet:</span> 높은 실행 성능 + 1등급 탐지 성능[cite: 2325].</li>
-                    <li><span class="highlight">HyDL-IDS:</span> 높은 실행/탐지 성능 + 미미한 미지 공격 탐지 가능성[cite: 2326].</li>
-                </ul>
-            </li>
-            <li><strong>시사점:</strong> 공간적 및 시간적 특징 고려가 일반화 및 미지 공격 탐지 향상에 도움 가능[cite: 2327].</li>
-        </ul>
-    </div>
-
-    <div id="slide12" class="step" data-x="1000" data-y="2500">
-        <h1>결론 및 향후 연구 방향 (본 논문)</h1>
-        <ul>
-            <li><strong>주요 당면 과제:</strong> 미지 공격 및 정교한 공격 탐지 능력 부족, 임베디드 시스템 리소스 소비 최적화[cite: 2330, 2331].</li>
-            <li><strong>향후 연구 방향 제안:</strong> 미지 공격 탐지 능력 향상, 경량화(실행 속도 향상, 리소스 소비 절감), 시간/공간 특징 고려 아키텍처, 전이 학습 활용[cite: 2332, 2333].</li>
-            <li><strong>연구 요약:</strong> CANet과 HyDL-IDS를 잠재적 베이스라인으로 제안, 향후 개발 방향 제시[cite: 2340, 2342, 2343].</li>
-        </ul>
-    </div>
-
-    <div id="overview" class="step" data-x="1000" data-y="0" data-scale="14"> </div>
-
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/impress.js/0.5.3/impress.min.js"></script>
-<script>impress().init();</script>
-
+        // Toast Notification
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
