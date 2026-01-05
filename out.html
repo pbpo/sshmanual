@@ -12,6 +12,8 @@
         .step-card { transition: all 0.3s ease; }
         .step-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
         .code-block { font-family: 'Menlo', 'Monaco', 'Courier New', monospace; }
+        .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -23,7 +25,7 @@
                 <i data-lucide="server" class="w-6 h-6"></i>
                 <h1 class="text-xl font-bold">Lab Server Access Guide</h1>
             </div>
-            <span class="text-xs bg-indigo-500 px-2 py-1 rounded text-indigo-100">Beginner v1.0</span>
+            <span class="text-xs bg-indigo-500 px-2 py-1 rounded text-indigo-100">Beginner v1.1</span>
         </div>
     </header>
 
@@ -74,9 +76,18 @@
                                 <code class="text-green-400">ssh-keygen -t ed25519</code>
                                 <button onclick="copyText('ssh-keygen -t ed25519')" class="text-slate-400 hover:text-white"><i data-lucide="copy" class="w-4 h-4"></i></button>
                             </div>
-                            <p class="text-slate-400 text-xs mt-2">
-                                ※ If prompted with questions, type nothing and just press <span class="text-yellow-400 font-bold">Enter 3 times</span>.
-                            </p>
+                            
+                            <!-- Important Warning -->
+                            <div class="mt-4 bg-yellow-900/50 border border-yellow-600 p-3 rounded-lg flex items-start gap-3">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5"></i>
+                                <div>
+                                    <p class="text-yellow-100 font-bold mb-1">Do NOT type anything!</p>
+                                    <p class="text-yellow-200/80 text-xs">
+                                        When prompted with questions (e.g., "Enter file in which to save..."),<br>
+                                        <span class="text-white font-bold text-base underline decoration-yellow-500 decoration-2 underline-offset-2">JUST PRESS ENTER 3 TIMES</span> until it finishes.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
                         <div id="content-mac" class="hidden bg-slate-900 rounded-xl p-4 text-slate-100 code-block text-sm overflow-x-auto">
@@ -85,9 +96,18 @@
                                 <code class="text-green-400">ssh-keygen -t ed25519</code>
                                 <button onclick="copyText('ssh-keygen -t ed25519')" class="text-slate-400 hover:text-white"><i data-lucide="copy" class="w-4 h-4"></i></button>
                             </div>
-                            <p class="text-slate-400 text-xs mt-2">
-                                ※ If prompted with questions, type nothing and just press <span class="text-yellow-400 font-bold">Enter 3 times</span>.
-                            </p>
+                            
+                            <!-- Important Warning -->
+                            <div class="mt-4 bg-yellow-900/50 border border-yellow-600 p-3 rounded-lg flex items-start gap-3">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5"></i>
+                                <div>
+                                    <p class="text-yellow-100 font-bold mb-1">Do NOT type anything!</p>
+                                    <p class="text-yellow-200/80 text-xs">
+                                        When prompted with questions (e.g., "Enter file in which to save..."),<br>
+                                        <span class="text-white font-bold text-base underline decoration-yellow-500 decoration-2 underline-offset-2">JUST PRESS ENTER 3 TIMES</span> until it finishes.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -190,6 +210,76 @@
                                     <code class="text-green-400 font-mono bg-slate-700 px-2 py-1 rounded">lab_gpu_shell</code>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 5: Tools & Tips -->
+            <section class="step-card bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-orange-500"></div>
+                <div class="flex items-start gap-4">
+                    <div class="bg-orange-100 text-orange-600 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0">5</div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold mb-4">Tools & Tips (Survival Kit)</h3>
+                        
+                        <div class="space-y-6">
+                            
+                            <!-- 1. Monitoring -->
+                            <div>
+                                <h4 class="flex items-center gap-2 text-md font-bold text-slate-700 mb-2">
+                                    <i data-lucide="activity" class="w-4 h-4"></i> Monitoring Resources
+                                </h4>
+                                <div class="grid md:grid-cols-2 gap-3">
+                                    <div class="bg-slate-100 p-3 rounded-lg">
+                                        <p class="text-xs font-bold text-slate-500 mb-1">Check GPU Status</p>
+                                        <code class="text-sm bg-black text-green-400 p-1 px-2 rounded block w-full">watch -n 1 nvidia-smi</code>
+                                        <p class="text-[11px] text-slate-500 mt-1">Updates every 1s. Check 'Volatile GPU-Util' for usage.</p>
+                                    </div>
+                                    <div class="bg-slate-100 p-3 rounded-lg">
+                                        <p class="text-xs font-bold text-slate-500 mb-1">Check CPU/RAM</p>
+                                        <code class="text-sm bg-black text-green-400 p-1 px-2 rounded block w-full">htop</code>
+                                        <p class="text-[11px] text-slate-500 mt-1">Visual task manager. Press 'q' to quit.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Byobu -->
+                            <div>
+                                <h4 class="flex items-center gap-2 text-md font-bold text-slate-700 mb-2">
+                                    <i data-lucide="shield" class="w-4 h-4"></i> Keep Code Running (Byobu)
+                                </h4>
+                                <div class="bg-orange-50 border border-orange-200 p-4 rounded-xl text-sm text-orange-900">
+                                    <p class="mb-2"><strong>Prevents code from stopping</strong> even if you close the terminal window or disconnect internet.</p>
+                                    <ol class="list-decimal pl-5 space-y-1 mb-3">
+                                        <li>Type <code class="bg-white px-1 rounded border border-orange-200">byobu</code> to enter the session.</li>
+                                        <li>Run your code (e.g., training).</li>
+                                        <li>To leave it running: Press <span class="font-bold border border-orange-400 px-1 rounded bg-orange-100">F6</span> (Detach).</li>
+                                        <li>To return later: Type <code class="bg-white px-1 rounded border border-orange-200">byobu</code> again.</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <!-- 3. PyTorch Empty GPU -->
+                            <div>
+                                <h4 class="flex items-center gap-2 text-md font-bold text-slate-700 mb-2">
+                                    <i data-lucide="cpu" class="w-4 h-4"></i> Use Specific GPU in PyTorch
+                                </h4>
+                                <div class="bg-slate-800 text-slate-200 p-4 rounded-xl text-sm">
+                                    <p class="mb-2 text-xs text-slate-400">1. Check <code class="text-slate-300">nvidia-smi</code> to find a free GPU ID (e.g., 0, 1, 2).</p>
+                                    <p class="mb-2 text-xs text-slate-400">2. Set the device <strong>at the top</strong> of your Python script.</p>
+                                    <div class="code-block bg-black p-3 rounded border border-slate-700 text-green-400 overflow-x-auto">
+<span class="text-pink-500">import</span> os
+<span class="text-slate-500"># Set to use GPU 1 (Change number as needed)</span>
+os.environ[<span class="text-yellow-300">"CUDA_VISIBLE_DEVICES"</span>] = <span class="text-yellow-300">"1"</span>
+
+<span class="text-pink-500">import</span> torch
+<span class="text-slate-500"># Now 'cuda' automatically refers to GPU 1</span>
+device = torch.device(<span class="text-yellow-300">"cuda"</span>)
+</div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
